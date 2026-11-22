@@ -29,11 +29,19 @@ git clone https://github.com/jeremywight/graph-run
 ./graph-run/install.sh /path/to/your-repo
 ```
 
-Then, in Claude Code in that repo:
+Then, in Claude Code in that repo, describe the work:
+
+```
+/graph-run <what you want done>. Checks: <commands that must pass>. Scope: <files it may change>. Limit: <max nodes>.
+```
+
+For example:
 
 ```
 /graph-run Add CSV export to the reports page. Checks: npm test passes; npx tsc --noEmit clean. Scope: src/reports/**, tests/reports/**. Limit: 8 nodes.
 ```
+
+Only the description is required. Anything you leave out, it fills in from the repo and states as an assumption for you to correct at approval.
 
 It plans the work, proposes the specialist reviewers your task needs, and **stops for your approval** before touching a source file.
 
@@ -160,6 +168,8 @@ git -C graph-run pull
 `--update` replaces only the kit's own files (the command, the two agents and the gate hook), backing up any it changes to `.claude/graph-run-backup/<time>/`. It never touches your `settings.json`, `gate-commands` or other agents. If you keep run files somewhere other than `graph/`, pass `--graph-dir .graph` (or your folder) on every install and update. Start a new Claude Code session afterwards so the new versions load.
 
 ## Writing a good run
+
+A fuller example, with a deliverable and a time limit:
 
 ```
 /graph-run Migrate src/api/* from callbacks to async/await.

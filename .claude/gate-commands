@@ -1,0 +1,4 @@
+# One command per line, run from the repo root. All must exit 0 for the gate to open.
+# /graph-run rewrites this file from your acceptance checks. Examples:
+npm test --silent
+npx tsc --noEmit

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="300" viewBox="0 0 1200 300" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+<title>graph-run: manage Claude Code agents like a team</title>
+<text x="600.0" y="78" text-anchor="middle" font-size="60" font-weight="700" fill="#e6edf3">graph<tspan fill="#58a6ff">-run</tspan></text>
+<text x="600.0" y="122" text-anchor="middle" font-size="24" fill="#8b949e">Manage Claude Code agents like a team. Machines gate correctness. You gate taste, scope and risk.</text>
+<g transform="translate(20.0,170)"><rect x="0" y="0" width="160" height="64" rx="12" fill="#161b22" stroke="#8b949e" stroke-width="1.5"/>
+<text x="80.0" y="27" text-anchor="middle" font-size="19" font-weight="600" fill="#e6edf3">Plan</text>
+<text x="80.0" y="48" text-anchor="middle" font-size="13" fill="#8b949e">nodes + checks</text>
+<path d="M164 32.0 h28" stroke="#8b949e" stroke-width="2" fill="none"/><path d="M192 27.0 l8 5 l-8 5 z" fill="#8b949e"/>
+<rect x="200" y="0" width="160" height="64" rx="12" fill="#161b22" stroke="#f0b72f" stroke-width="3"/>
+<text x="280.0" y="27" text-anchor="middle" font-size="19" font-weight="600" fill="#f0b72f">You approve</text>
+<text x="280.0" y="48" text-anchor="middle" font-size="13" fill="#8b949e">plan + specialists</text>
+<path d="M364 32.0 h28" stroke="#8b949e" stroke-width="2" fill="none"/><path d="M392 27.0 l8 5 l-8 5 z" fill="#8b949e"/>
+<rect x="400" y="0" width="160" height="64" rx="12" fill="#161b22" stroke="#8b949e" stroke-width="1.5"/>
+<text x="480.0" y="27" text-anchor="middle" font-size="19" font-weight="600" fill="#e6edf3">Build</text>
+<text x="480.0" y="48" text-anchor="middle" font-size="13" fill="#8b949e">one node each</text>
+<path d="M564 32.0 h28" stroke="#8b949e" stroke-width="2" fill="none"/><path d="M592 27.0 l8 5 l-8 5 z" fill="#8b949e"/>
+<rect x="600" y="0" width="160" height="64" rx="12" fill="#161b22" stroke="#8b949e" stroke-width="1.5"/>
+<text x="680.0" y="27" text-anchor="middle" font-size="19" font-weight="600" fill="#e6edf3">Verify</text>
+<text x="680.0" y="48" text-anchor="middle" font-size="13" fill="#8b949e">can't edit</text>
+<path d="M764 32.0 h28" stroke="#8b949e" stroke-width="2" fill="none"/><path d="M792 27.0 l8 5 l-8 5 z" fill="#8b949e"/>
+<rect x="800" y="0" width="160" height="64" rx="12" fill="#161b22" stroke="#8b949e" stroke-width="1.5"/>
+<text x="880.0" y="27" text-anchor="middle" font-size="19" font-weight="600" fill="#e6edf3">Review</text>
+<text x="880.0" y="48" text-anchor="middle" font-size="13" fill="#8b949e">experts veto</text>
+<path d="M964 32.0 h28" stroke="#8b949e" stroke-width="2" fill="none"/><path d="M992 27.0 l8 5 l-8 5 z" fill="#8b949e"/>
+<rect x="1000" y="0" width="160" height="64" rx="12" fill="#161b22" stroke="#8b949e" stroke-width="1.5"/>
+<text x="1080.0" y="27" text-anchor="middle" font-size="19" font-weight="600" fill="#e6edf3">Gate</text>
+<text x="1080.0" y="48" text-anchor="middle" font-size="13" fill="#8b949e">tests must pass</text></g>
+<text x="600.0" y="282" text-anchor="middle" font-size="15" fill="#8b949e"><tspan fill="#f0b72f">&#9679;</tspan> human gate   ·   failed checks go back to the node that made them, up to 3 times</text>
+</svg>

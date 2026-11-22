@@ -1,0 +1,21 @@
+# Example security lines for .claude/gate-commands. Copy the ones that fit your stack.
+# Each must exit 0 for the gate to open. Keep them fast: they run on every stop of a graph run.
+
+# Dependencies: fail on high or critical advisories (Node).
+npm audit --audit-level=high
+# Python: pip-audit        Go: govulncheck ./...        Rust: cargo audit
+
+# Secrets in the working tree and history (needs gitleaks installed; skip the line if it is not).
+gitleaks detect --no-banner --redact
+
+# No .env files tracked by git.
+! git ls-files | grep -E '(^|/)\.env($|\.)'
+
+# Risky sinks in front-end code (adjust the path and patterns to your stack).
+! grep -rnE 'dangerouslySetInnerHTML|\.innerHTML\s*=|\beval\(|new Function\(' src
+
+# No source maps in the production build (run after your build command).
+! find dist -name '*.map' | grep -q .
+
+# Pin security controls with tests, so they cannot be dropped by accident, for example a test
+# that reads your headers config and asserts Content-Security-Policy, X-Frame-Options and HSTS.

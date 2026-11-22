@@ -37,7 +37,7 @@ It's a good test because "correct" has two halves. Some of it a machine can chec
 
 **5. Hitting the usage limit lost nothing.** Three agents working in parallel were all stopped by the account's usage limit part way through. Because every agent saves as it goes, they were resumed from their files after the reset, and nothing was lost. One step that didn't save section by section lost its work twice (once to a pause, once to the limit), so the step prompts were changed to require it.
 
-**6. Security earned its own gate.** The first run had no security reviewer, so the owner asked for one-off reviews as the game grew. The first added a few missing security headers. The second came after a feedback form and play statistics were added, and found something no single file showed: each table was anonymous on its own, but joined on the device id, a player's feedback email linked to their play history. The owner chose to keep that link on purpose and document it. Both reviews worked, but only because the owner thought to ask. The kit now asks for them: a security reviewer runs when a node adds attack surface, and again before release.
+**6. Security earned its own gate.** The first run had no security reviewer, so the owner asked for one-off reviews as the game grew. The first added a few missing security headers. The second came after a feedback form and play statistics were added. Both reviews worked, but only because the owner thought to ask. The kit now asks for them: a security reviewer runs when a node adds attack surface, and again before release.
 
 ## Where the human was needed
 

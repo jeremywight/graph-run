@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.0 (2026-11-23)
+
+- **Outside agents:** a new `<outside_agents>` section in `/graph-run` for work done better by a tool outside Claude Code (for example image generation in another agent). It is paired with a Claude coordinator; they exchange files and `READY-n` / `DONE-n` / `ALL-DONE` markers through a shared folder; the setup lives in `graph/agents/` and the protocol is copied into the repo. New templates: `templates/agents/coordinator.md` and `templates/outside-agent.md`. An "Outside agents" table in graph.md.
+- **Test-only code kept out by the build:** the production build itself fails when test-only or debug code is present (platforms often run only the build), with the same check in the gate; an example line in `examples/gate-commands.security`.
+- **Flaky checks:** fix how a test waits before anything else; a tolerance on a timing or rate threshold loosens the check and needs the owner's approval, logged.
+- **Write back before closing:** at the end of every phase and before any session closes, the lead asks the owner "What should we write back to our graph run?" and records agents, outside agents' setup, protocols, decisions and learned rules, so the team can be recreated after its sessions are gone. Also asked at delivery. Work with large outputs kept outside the repo (recordings, marketing GIFs) keeps its agent and recipe in the repo.
+
 ## 1.0.0 (2026-11-22)
 
 First public release, after the kit's first real run built [The Matchmaker](https://playthematchmaker.com).

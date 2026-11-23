@@ -20,7 +20,7 @@ Most multi-agent setups fail the same way. One long session tries to do everythi
 
 It's a slash command, two agents, a Stop hook and a settings file. There's no framework, server or runtime, and you can read all of it in ten minutes.
 
-> **Proof, not a demo.** Its first real run built [The Matchmaker](https://playthematchmaker.com), a live daily puzzle game: 18 planned nodes, five agents, 507 tests. The gate blocked the agent 40 times, and the owner made 16 logged decisions. [Read what happened](docs/case-study.md), failures included.
+> **Proof, not a demo.** Its first real run built [The Matchmaker](https://playthematchmaker.com), a live daily puzzle game: 18 planned nodes, the kit's two agents plus the specialists it proposed for that project (a puzzle master, an Austen expert, a UI designer, and later a game designer), 507 tests. The gate blocked the agent 40 times, and the owner made 16 logged decisions. [Read what happened](docs/case-study.md), failures included.
 
 ## Quickstart
 
@@ -91,15 +91,23 @@ flowchart LR
 
 ## What you get
 
-Plain files you can read, diff and hand to the next session. Excerpts from the case-study run, lightly trimmed:
+The kit installs five things into your repo: the `/graph-run` command, two agents that every run uses (`graph-implementer` builds one node; `graph-verifier` re-checks it and cannot edit), a Stop-hook gate, and a settings file.
+
+> **You also get custom specialists, made for your task.** At planning, `/graph-run` reads your prompt and proposes the expert reviewers your task needs: the judgment your tests can't make, such as fairness, voice, design, security or domain correctness. **You approve each one before its agent file is written.** A puzzle game gets a puzzle master; an API gets a security reviewer; a contract tool gets a legal reviewer.
+
+The kit includes templates to start specialists from (a domain reviewer and a security reviewer) and [example specialists](templates/agents/examples/) from the case study. None of them are installed or used unless your run proposes them and you approve.
+
+## Example from the case study
+
+What a run produces: plain files you can read, diff and hand to the next session. **These excerpts are from the case study, a daily logic-puzzle game, so its specialists (here, a puzzle master) are the ones `/graph-run` proposed for that project.** Your run will propose its own. Lightly trimmed:
 
 `graph/graph.md`: the plan, with an agent and a check for every node:
 
 | id | type | agent | writes | check | depends on |
 |---|---|---|---|---|---|
-| N1 | model | puzzle-master | `graph/reviews/01-engine-design.md` | rules on each clue type; states a human-solvability criterion the engine can test | none |
-| N2 | model | graph-implementer | `src/engine/**`, `tests/engine/**` | `npx vitest run tests/engine` exits 0 (1,000 dates unique, deterministic, human-solvable) | N0, N1 |
-| N5 | model | puzzle-master | `graph/reviews/02-playtest.md` | solves 14 generated puzzles by hand before reading the answers; verdict `accept` | S1 |
+| N1 | model | puzzle-master *(specialist proposed for this project)* | `graph/reviews/01-engine-design.md` | rules on each clue type; states a human-solvability criterion the engine can test | none |
+| N2 | model | graph-implementer *(from the kit)* | `src/engine/**`, `tests/engine/**` | `npx vitest run tests/engine` exits 0 (1,000 dates unique, deterministic, human-solvable) | N0, N1 |
+| N5 | model | puzzle-master *(specialist proposed for this project)* | `graph/reviews/02-playtest.md` | solves 14 generated puzzles by hand before reading the answers; verdict `accept` | S1 |
 
 `graph/checks.md`: one row per requirement, with evidence and no unproven "pass":
 

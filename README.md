@@ -95,7 +95,7 @@ The kit installs five things into your repo: the `/graph-run` command, two agent
 
 > **You also get custom specialists, made for your task.** At planning, `/graph-run` reads your prompt and proposes the expert reviewers your task needs: the judgment your tests can't make, such as fairness, voice, design, security or domain correctness. **You approve each one before its agent file is written.** A puzzle game gets a puzzle master; an API gets a security reviewer; a contract tool gets a legal reviewer.
 
-The kit includes templates to start specialists from (a domain reviewer and a security reviewer) and [example specialists](templates/agents/examples/) from the case study. None of them are installed or used unless your run proposes them and you approve.
+The kit includes templates to start specialists from (a domain reviewer, a security reviewer and a coordinator for outside agents) and [example specialists](templates/agents/examples/) from the case study. None of them are installed or used unless your run proposes them and you approve.
 
 ## Example from the case study
 

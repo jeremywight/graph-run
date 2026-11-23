@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.1 (2026-11-23)
+
+- **README:** "What you get" now says exactly what the kit installs (the command, two agents, the gate, settings) and states plainly that each run proposes custom specialists for its task, which you approve before their agent files are written. The case-study excerpts moved to "Example from the case study", with each agent labelled as from the kit or proposed for that project.
+
 ## 1.1.0 (2026-11-23)
 
 - **Outside agents:** a new `<outside_agents>` section in `/graph-run` for work done better by a tool outside Claude Code (for example image generation in another agent). It is paired with a Claude coordinator; they exchange files and `READY-n` / `DONE-n` / `ALL-DONE` markers through a shared folder; the setup lives in `graph/agents/` and the protocol is copied into the repo. New templates: `templates/agents/coordinator.md` and `templates/outside-agent.md`. An "Outside agents" table in graph.md.

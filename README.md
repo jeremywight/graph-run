@@ -109,6 +109,8 @@ What a run produces: plain files you can read, diff and hand to the next session
 | N2 | model | graph-implementer *(from the kit)* | `src/engine/**`, `tests/engine/**` | `npx vitest run tests/engine` exits 0 (1,000 dates unique, deterministic, human-solvable) | N0, N1 |
 | N5 | model | puzzle-master *(specialist proposed for this project)* | `graph/reviews/02-playtest.md` | solves 14 generated puzzles by hand before reading the answers; verdict `accept` | S1 |
 
+The puzzle master appears twice on purpose: it reviewed the engine design before any code existed (N1), then play-tested real generated puzzles after the build (N5). A specialist can gate both the plan and the result.
+
 `graph/checks.md`: one row per requirement, with evidence and no unproven "pass":
 
 | node | requirement | verdict | evidence |

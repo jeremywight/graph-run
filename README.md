@@ -141,6 +141,14 @@ The reviewers are what catch problems tests can't. In the case study, the puzzle
 
 You don't have to write them up front: `/graph-run` proposes them. To start from something real, copy one of the [example specialists](templates/agents/examples/) from the case study (puzzle master, period expert, UI designer, game designer), or the blank [domain reviewer](templates/agents/domain-reviewer.md) and [security reviewer](templates/agents/security-reviewer.md) templates.
 
+### Outside agents
+
+Some work is better done outside Claude Code: in the case study, the owner preferred another vendor's agent for image generation over anything Claude could draw. `/graph-run` pairs such an outside agent with a Claude **coordinator** that briefs it, reviews its batches with the specialists and brings accepted work into the repo. The two never talk directly; they pass files and `READY-n` / `DONE-n` markers through a shared folder. Start from the [coordinator](templates/agents/coordinator.md) and [outside agent](templates/outside-agent.md) templates.
+
+### Write back before closing
+
+Agents defined only in a session's context, and protocols kept in a folder outside the repo, vanish when the session closes. So at the end of every phase, and before any session closes, the lead asks: *"What should we write back to our graph run?"* and records new agents, outside agents' setup, protocols, decisions and learned rules in `graph/`, so the whole team can be recreated later.
+
 Built a good one? [Share it](https://github.com/jeremywight/graph-run/issues/new?template=share-a-specialist.md).
 
 ## Security: three layers, not one review
@@ -221,8 +229,9 @@ Rows marked Weak, Partial or Medium rely partly or wholly on the prompt, and an 
 .claude/hooks/gate.sh                  Stop-hook gate with a 3-attempt cap
 .claude/gate-commands                  acceptance checks, one shell command per line
 .claude/settings.json                  allow / ask / deny permissions and hook wiring
-templates/agents/                      domain and security reviewer templates
+templates/agents/                      domain reviewer, security reviewer and coordinator templates
 templates/agents/examples/             four specialists from a real run
+templates/outside-agent.md             setup for an agent outside Claude Code (e.g. image generation)
 templates/owner-feedback.md            how your feedback becomes routed work
 templates/step-prompt.md               one prompt per remaining step, for handoffs
 examples/gate-commands.security        sample security checks for the Stop gate

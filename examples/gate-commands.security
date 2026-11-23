@@ -14,6 +14,10 @@ gitleaks detect --no-banner --redact
 # Risky sinks in front-end code (adjust the path and patterns to your stack).
 ! grep -rnE 'dangerouslySetInnerHTML|\.innerHTML\s*=|\beval\(|new Function\(' src
 
+# No test-only code in the production build (run after your build command; use markers unique to that code).
+# Also end the build script itself with this check, so a platform build that skips the gate still fails.
+! grep -rqE 'test-menu|__TEST_ONLY__' dist
+
 # No source maps in the production build (run after your build command).
 ! find dist -name '*.map' | grep -q .
 

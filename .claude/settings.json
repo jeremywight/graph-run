@@ -5,7 +5,6 @@
       "Grep",
       "Glob",
       "Edit(graph/**)",
-      "Edit(.claude/gate-commands)",
       "Edit(src/**)",
       "Edit(tests/**)",
       "Bash(npm test:*)",
@@ -26,6 +25,7 @@
       "Bash(git cherry-pick:*)"
     ],
     "ask": [
+      "Edit(.claude/gate-commands)",
       "Bash(git push:*)",
       "Bash(git merge:*)",
       "Bash(git rebase:*)",

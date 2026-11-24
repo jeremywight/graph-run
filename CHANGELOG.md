@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.2 (2026-11-24)
+
+- **Gate commands need approval:** `Edit(.claude/gate-commands)` moved from `allow` to `ask` in `settings.json`. The Stop hook runs each line of that file as a shell command, outside Claude's permission rules, so a silent edit could run blocked commands (`curl`, `rm`, `git push`) or open the gate with `true`. `/graph-run` writes the file at planning, so this adds one prompt when you approve the plan. Existing installs: `--update` doesn't touch `settings.json`, so make this change by hand.
+
 ## 1.1.1 (2026-11-23)
 
 - **README:** "What you get" now says exactly what the kit installs (the command, two agents, the gate, settings) and states plainly that each run proposes custom specialists for its task, which you approve before their agent files are written. The case-study excerpts moved to "Example from the case study", with each agent labelled as from the kit or proposed for that project.

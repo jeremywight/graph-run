@@ -204,7 +204,7 @@ Scope: src/api/**, tests/api/**. Limit: 12 nodes, 3 retries, 2h.
 |---|---|---|
 | Approve before work | The command stops; plan mode optional | Medium (strong with plan mode) |
 | Checks pass before finishing | `gate.sh` on the Stop hook (exit 2 blocks) | Strong |
-| Don't weaken the gates | Deny edits to `settings.json` and `hooks/**`; verifier reads test diffs | Partial: `gate-commands` is editable, so review its diff |
+| Don't weaken the gates | Deny edits to `settings.json` and `hooks/**`; edits to `gate-commands` prompt (the hook runs each line as a shell command, outside permission rules); verifier reads test diffs | Partial: allowed scripts and tests can still write `gate-commands`, so review its diff |
 | Stay in scope | Out-of-scope edits prompt for permission; verifier lists out-of-scope files | Medium: lost under auto-accept or skip-permissions |
 | Push, merge, reset, install, rm | `ask` rules | Strong |
 | No publish, curl or wget; no reading `.env` | `deny` rules | Strong |

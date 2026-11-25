@@ -8,7 +8,7 @@ Security and reliability fixes from a review of the whole repo.
 - **Gate:** the attempt counter is read as digits only and never evaluated, so a crafted `graph/.gate_attempts` can't run code. Edits to the counter are denied.
 - **Settings:** dropped the unscoped `Read`, `Grep` and `Glob` allow rules (reading inside the project needs no rule) and denied reads of `~/.ssh`, `~/.aws` and `~/.config/gh`. `npx` rules and the sample check use `--no-install`, so a missing tool fails instead of being downloaded.
 - **Installer:** `--graph-dir` now also rewrites the paths in `settings.json`, refuses names with characters other than letters, digits and `._/-` (which could have injected shell code into the gate), and reports a missing value. It no longer joins its `.gitignore` lines onto a last line that has no newline.
-- **README:** says plainly that the allow rules decide what runs without asking and are not a sandbox, and rates the gate and deny rows accordingly.
+- **README:** says plainly that the allow rules decide what runs without asking and are not a sandbox, and rates the gate and deny rows accordingly. "What you get" now lists every file and folder the installer adds, including `gate-commands`, the `graph/` folder, the `.gitignore` lines, and the `settings.graph-run.json` you must merge when you already have settings. The case-study callout now matches the case study: the lead created the puzzle master and UI designer, and two more specialists were found with the owner's help. Also notes the "puzzle master appears twice" paragraph added in 1.1.1.
 - **Existing installs:** `--update` replaces the gate hook but never your `settings.json`. Make the settings changes above by hand.
 
 ## 1.1.2 (2026-11-24)

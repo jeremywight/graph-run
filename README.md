@@ -20,7 +20,7 @@ Most multi-agent setups fail the same way. One long session tries to do everythi
 
 It's a slash command, two agents, a Stop hook and a settings file. There's no framework, server or runtime, and you can read all of it in ten minutes.
 
-> **Proof, not a demo.** Its first real run built [The Matchmaker](https://playthematchmaker.com), a live daily puzzle game: 18 planned nodes, the kit's two agents plus the specialists it proposed for that project (a puzzle master, an Austen expert, a UI designer, and later a game designer), 507 tests. The gate blocked the agent 40 times, and the owner made 16 logged decisions. [Read what happened](docs/case-study.md), failures included.
+> **Proof, not a demo.** Its first real run built [The Matchmaker](https://playthematchmaker.com), a live daily puzzle game: 18 planned nodes, the kit's two agents, the specialists the lead created for that project (a puzzle master and a UI designer), and two more found along the way with the owner's help (an Austen expert and a game designer), 507 tests. The gate blocked the agent 40 times, and the owner made 16 logged decisions. [Read what happened](docs/case-study.md), failures included.
 
 ## Quickstart
 
@@ -91,23 +91,32 @@ flowchart LR
 
 ## What you get
 
-The kit installs five things into your repo: the `/graph-run` command, two agents that every run uses (`graph-implementer` builds one node; `graph-verifier` re-checks it and cannot edit), a Stop-hook gate, and a settings file.
+The installer adds these to your repo:
+
+- `.claude/commands/graph-run.md`: the `/graph-run` command.
+- `.claude/agents/graph-implementer.md` and `graph-verifier.md`: two agents that every run uses. The implementer builds one node; the verifier re-checks it and has no Edit or Write tools.
+- `.claude/hooks/gate.sh`: the Stop-hook gate.
+- `.claude/gate-commands`: the checks the gate runs, one command per line. Each run rewrites it from your acceptance checks.
+- `.claude/settings.json`: permission rules and the Stop hook. If you already have one, you get `.claude/settings.graph-run.json` instead, and **the gate stays off until you merge it in**.
+- An empty `graph/` folder for run files, and two lines in `.gitignore` (`graph/.active`, `graph/.gate_attempts`).
+
+The templates and examples below stay in the kit; the installer doesn't copy them.
 
 > **You also get custom specialists, made for your task.** At planning, `/graph-run` reads your prompt and proposes the expert reviewers your task needs: the judgment your tests can't make, such as fairness, voice, design, security or domain correctness. **You approve each one before its agent file is written.** A puzzle game gets a puzzle master; an API gets a security reviewer; a contract tool gets a legal reviewer.
 
-The kit includes templates to start specialists from (a domain reviewer, a security reviewer and a coordinator for outside agents) and [example specialists](templates/agents/examples/) from the case study. None of them are installed or used unless your run proposes them and you approve.
+The kit includes templates to start specialists from (a domain reviewer and a security reviewer), a coordinator template for pairing with outside agents, and [example specialists](templates/agents/examples/) from the case study. None of them are used unless your run proposes them and you approve.
 
 ## Example from the case study
 
-What a run produces: plain files you can read, diff and hand to the next session. **These excerpts are from the case study, a daily logic-puzzle game, so its specialists (here, a puzzle master) are the ones `/graph-run` proposed for that project.** Your run will propose its own. Lightly trimmed:
+What a run produces: plain files you can read, diff and hand to the next session. **These excerpts are from the case study, a daily logic-puzzle game, so its specialists (here, a puzzle master) are the ones created for that project.** Your run will propose its own. Lightly trimmed:
 
 `graph/graph.md`: the plan, with an agent and a check for every node:
 
 | id | type | agent | writes | check | depends on |
 |---|---|---|---|---|---|
-| N1 | model | puzzle-master *(specialist proposed for this project)* | `graph/reviews/01-engine-design.md` | rules on each clue type; states a human-solvability criterion the engine can test | none |
+| N1 | model | puzzle-master *(specialist created for this project)* | `graph/reviews/01-engine-design.md` | rules on each clue type; states a human-solvability criterion the engine can test | none |
 | N2 | model | graph-implementer *(from the kit)* | `src/engine/**`, `tests/engine/**` | `npx vitest run tests/engine` exits 0 (1,000 dates unique, deterministic, human-solvable) | N0, N1 |
-| N5 | model | puzzle-master *(specialist proposed for this project)* | `graph/reviews/02-playtest.md` | solves 14 generated puzzles by hand before reading the answers; verdict `accept` | S1 |
+| N5 | model | puzzle-master *(specialist created for this project)* | `graph/reviews/02-playtest.md` | solves 14 generated puzzles by hand before reading the answers; verdict `accept` | S1 |
 
 The puzzle master appears twice on purpose: it reviewed the engine design before any code existed (N1), then play-tested real generated puzzles after the build (N5). A specialist can gate both the plan and the result.
 
@@ -204,14 +213,16 @@ Scope: src/api/**, tests/api/**. Limit: 12 nodes, 3 retries, 2h.
 |---|---|---|
 | Approve before work | The command stops; plan mode optional | Medium (strong with plan mode) |
 | Checks pass before finishing | `gate.sh` on the Stop hook (exit 2 blocks) | Strong |
-| Don't weaken the gates | Deny edits to `settings.json` and `hooks/**`; edits to `gate-commands` prompt (the hook runs each line as a shell command, outside permission rules); verifier reads test diffs | Partial: allowed scripts and tests can still write `gate-commands`, so review its diff |
+| Don't weaken the gates | Deny edits to `settings.json`, `hooks/**` and the attempt counter; edits to `gate-commands` prompt (the hook runs each line as a shell command, outside permission rules); verifier reads test diffs | Partial: allowed scripts and tests can still write `gate-commands`, so review its diff |
 | Stay in scope | Out-of-scope edits prompt for permission; verifier lists out-of-scope files | Medium: lost under auto-accept or skip-permissions |
 | Push, merge, reset, install, rm | `ask` rules | Strong |
-| No publish, curl or wget; no reading `.env` | `deny` rules | Strong |
+| No publish, curl or wget; no reading `.env`, `~/.ssh`, `~/.aws` or `~/.config/gh` | `deny` rules | Medium: covers Claude's own commands only (see below) |
 | Verifier doesn't edit | No Edit or Write tools | Medium: Bash could still write |
 | No two nodes on one file | Worktrees, by instruction | Weak: not hard-enforced |
 
 Rows marked Weak, Partial or Medium rely partly or wholly on the prompt, and an agent can ignore a prompt. If a rule matters to you, back it with a permission rule or a hook, or check it yourself in review.
+
+**The allow rules decide what runs without asking. They are not a sandbox.** Claude can edit `src/`, `tests/` and `graph/` and run the tests and `graph/scripts/` without a prompt, so it can write code and run it. That code is not bound by the `deny` rules: a test or script could still open a network connection or read a file the rules deny. The rules make the normal path quiet and the risky commands visible. They don't contain code Claude writes. If you need that, run the session in a container or a VM with no secrets, or turn on Claude Code's sandboxed Bash.
 
 ## FAQ
 

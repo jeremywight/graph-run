@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.2.0 (2026-11-25)
+
+Security and reliability fixes from a review of the whole repo.
+
+- **Gate:** a check that reads stdin can no longer swallow the checks after it (each one now runs with stdin from `/dev/null`). Before this, such a check could let the gate pass without running the lines below it.
+- **Gate:** the attempt counter is read as digits only and never evaluated, so a crafted `graph/.gate_attempts` can't run code. Edits to the counter are denied.
+- **Settings:** dropped the unscoped `Read`, `Grep` and `Glob` allow rules (reading inside the project needs no rule) and denied reads of `~/.ssh`, `~/.aws` and `~/.config/gh`. `npx` rules and the sample check use `--no-install`, so a missing tool fails instead of being downloaded.
+- **Installer:** `--graph-dir` now also rewrites the paths in `settings.json`, refuses names with characters other than letters, digits and `._/-` (which could have injected shell code into the gate), and reports a missing value. It no longer joins its `.gitignore` lines onto a last line that has no newline.
+- **README:** says plainly that the allow rules decide what runs without asking and are not a sandbox, and rates the gate and deny rows accordingly. "What you get" now lists every file and folder the installer adds, including `gate-commands`, the `graph/` folder, the `.gitignore` lines, and the `settings.graph-run.json` you must merge when you already have settings. The case-study callout now matches the case study: the lead created the puzzle master and UI designer, and two more specialists were found with the owner's help. Also notes the "puzzle master appears twice" paragraph added in 1.1.1.
+- **Existing installs:** `--update` replaces the gate hook but never your `settings.json`. Make the settings changes above by hand.
+
 ## 1.1.2 (2026-11-24)
 
 - **Gate commands need approval:** `Edit(.claude/gate-commands)` moved from `allow` to `ask` in `settings.json`. The Stop hook runs each line of that file as a shell command, outside Claude's permission rules, so a silent edit could run blocked commands (`curl`, `rm`, `git push`) or open the gate with `true`. `/graph-run` writes the file at planning, so this adds one prompt when you approve the plan. Existing installs: `--update` doesn't touch `settings.json`, so make this change by hand.

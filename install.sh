@@ -18,7 +18,7 @@ TARGET=""
 while [ $# -gt 0 ]; do
   case "$1" in
     --update) UPDATE=1; shift ;;
-    --graph-dir) GRAPH_DIR="${2:-}"; shift 2 ;;
+    --graph-dir) [ $# -ge 2 ] || { echo "--graph-dir needs a folder name" >&2; exit 1; }; GRAPH_DIR="$2"; shift 2 ;;
     -h|--help) sed -n '2,12p' "$0"; exit 0 ;;
     *) TARGET="$1"; shift ;;
   esac
@@ -27,7 +27,7 @@ if [ -z "$TARGET" ] || [ ! -d "$TARGET" ]; then
   echo "Usage: $0 [--update] [--graph-dir DIR] /path/to/your-repo" >&2
   exit 1
 fi
-case "$GRAPH_DIR" in ''|/*|*..*|*' '*) echo "--graph-dir must be a relative folder name, such as .graph" >&2; exit 1 ;; esac
+case "$GRAPH_DIR" in ''|/*|*..*|*[!A-Za-z0-9._/-]*) echo "--graph-dir must be a relative folder name, such as .graph" >&2; exit 1 ;; esac
 TARGET="$(cd "$TARGET" && pwd)"
 
 OWNED=(.claude/commands/graph-run.md .claude/agents/graph-implementer.md .claude/agents/graph-verifier.md .claude/hooks/gate.sh)
@@ -70,15 +70,17 @@ chmod +x "$TARGET/.claude/hooks/gate.sh"
 if [ "$UPDATE" = 0 ]; then
   if [ -e "$TARGET/.claude/gate-commands" ]; then skipped+=(.claude/gate-commands); else cp "$KIT/.claude/gate-commands" "$TARGET/.claude/gate-commands"; echo "  added   .claude/gate-commands"; fi
   if [ -e "$TARGET/.claude/settings.json" ]; then
-    cp "$KIT/.claude/settings.json" "$TARGET/.claude/settings.graph-run.json"
+    render .claude/settings.json "$TARGET/.claude/settings.graph-run.json"
     echo "  added   .claude/settings.graph-run.json  (merge it into your settings.json by hand, then delete it)"
   else
-    cp "$KIT/.claude/settings.json" "$TARGET/.claude/settings.json"; echo "  added   .claude/settings.json"
+    render .claude/settings.json "$TARGET/.claude/settings.json"; echo "  added   .claude/settings.json"
   fi
 fi
 
 mkdir -p "$TARGET/$GRAPH_DIR"
 touch "$TARGET/.gitignore"
+# Never append onto a last line that has no newline.
+if [ -s "$TARGET/.gitignore" ] && [ -n "$(tail -c1 "$TARGET/.gitignore")" ]; then echo >> "$TARGET/.gitignore"; fi
 ignores=("$GRAPH_DIR/.active" "$GRAPH_DIR/.gate_attempts")
 [ "$updated" -gt 0 ] && ignores+=(".claude/graph-run-backup/")
 for line in "${ignores[@]}"; do

@@ -40,6 +40,27 @@ printf 'true\n' > "$T/.claude/gate-commands"
 check "then pass -> exit 0" 0 "$(run_gate)"
 check "counter cleared on pass" no "$( [ -f "$T/graph/.gate_attempts" ] && echo yes || echo no )"
 
+# 6b. A check that reads stdin must not swallow the checks after it.
+printf 'cat >/dev/null\nfalse\n' > "$T/.claude/gate-commands"
+check "stdin-reading check does not skip later checks -> exit 2" 2 "$(run_gate)"
+
+# 6c. A tampered counter is never evaluated as code, and still counts from 1.
+# shellcheck disable=SC2016  # the $(...) is meant to stay literal
+printf 'a[$(touch %s/PWNED)]\n' "$T" > "$T/graph/.gate_attempts"
+check "tampered counter -> still blocks" 2 "$(run_gate)"
+check "tampered counter is not executed" no "$( [ -e "$T/PWNED" ] && echo yes || echo no )"
+check "tampered counter restarts at 1" 1 "$(cat "$T/graph/.gate_attempts")"
+printf 'true\n' > "$T/.claude/gate-commands"; run_gate >/dev/null
+
+# 6d. Settings: the gate's own inputs need the owner's approval or are off limits.
+if command -v python3 >/dev/null; then
+  perms() { python3 -c "import json,sys; p=json.load(open(sys.argv[1]))['permissions']; print('yes' if sys.argv[3] in p[sys.argv[2]] else 'no')" "$KIT/.claude/settings.json" "$1" "$2"; }
+  check "settings: gate-commands edits ask" yes "$(perms ask 'Edit(.claude/gate-commands)')"
+  check "settings: gate-commands edits not auto-allowed" no "$(perms allow 'Edit(.claude/gate-commands)')"
+  check "settings: counter edits denied" yes "$(perms deny 'Edit(graph/.gate_attempts)')"
+  check "settings: no unscoped Read allow" no "$(perms allow 'Read')"
+fi
+
 # 7. settings.json is valid JSON.
 if command -v python3 >/dev/null; then
   python3 -c "import json,sys; json.load(open(sys.argv[1]))" "$KIT/.claude/settings.json" && r=valid || r=invalid
@@ -48,7 +69,9 @@ fi
 
 # 8. install.sh adds files, never overwrites, and is idempotent.
 R="$T/repo"; mkdir -p "$R/.claude"; echo '{"mine":true}' > "$R/.claude/settings.json"
+printf 'node_modules' > "$R/.gitignore"   # no trailing newline
 bash "$KIT/install.sh" "$R" >/dev/null
+check "install: last .gitignore line without newline kept intact" 1 "$(grep -cxF 'node_modules' "$R/.gitignore")"
 check "install: command added" yes "$( [ -f "$R/.claude/commands/graph-run.md" ] && echo yes || echo no )"
 check "install: gate executable" yes "$( [ -x "$R/.claude/hooks/gate.sh" ] && echo yes || echo no )"
 check "install: existing settings untouched" '{"mine":true}' "$(cat "$R/.claude/settings.json")"
@@ -81,6 +104,14 @@ check "graph-dir: gate uses the new folder" 1 "$(grep -c 'RUN_DIR="$ROOT/.graph"
 check "graph-dir: no old run path left in the command" 0 "$(grep -cE '(^|[^[:alnum:]_.])graph/' "$G/.claude/commands/graph-run.md")"
 check "graph-dir: run paths point at .graph" yes "$(grep -q '\.graph/graph\.md' "$G/.claude/commands/graph-run.md" && echo yes || echo no)"
 check "graph-dir: ignore lines use the new folder" 1 "$(grep -cxF '.graph/.active' "$G/.gitignore")"
+check "graph-dir: settings permissions use the new folder" 1 "$(grep -cF '"Edit(.graph/**)"' "$G/.claude/settings.json")"
+check "graph-dir: no old run path left in settings" 0 "$(grep -cE '(^|[^[:alnum:]_.])graph/' "$G/.claude/settings.json")"
+I="$T/inj"; mkdir -p "$I"
+bash "$KIT/install.sh" --graph-dir 'g$(id)' "$I" >/dev/null 2>&1; r=$?
+check "graph-dir: shell characters rejected" 1 "$r"
+check "graph-dir: nothing installed after rejection" no "$( [ -e "$I/.claude" ] && echo yes || echo no )"
+bash "$KIT/install.sh" "$I" --graph-dir >/dev/null 2>&1; r=$?
+check "graph-dir: missing value rejected" 1 "$r"
 mkdir -p "$G/.graph"; touch "$G/.graph/.active"; printf 'false\n' > "$G/.claude/gate-commands"
 echo '{}' | CLAUDE_PROJECT_DIR="$G" bash "$G/.claude/hooks/gate.sh" >/dev/null 2>&1; r=$?
 check "graph-dir: gate blocks on .graph/.active" 2 "$r"

@@ -204,14 +204,16 @@ Scope: src/api/**, tests/api/**. Limit: 12 nodes, 3 retries, 2h.
 |---|---|---|
 | Approve before work | The command stops; plan mode optional | Medium (strong with plan mode) |
 | Checks pass before finishing | `gate.sh` on the Stop hook (exit 2 blocks) | Strong |
-| Don't weaken the gates | Deny edits to `settings.json` and `hooks/**`; edits to `gate-commands` prompt (the hook runs each line as a shell command, outside permission rules); verifier reads test diffs | Partial: allowed scripts and tests can still write `gate-commands`, so review its diff |
+| Don't weaken the gates | Deny edits to `settings.json`, `hooks/**` and the attempt counter; edits to `gate-commands` prompt (the hook runs each line as a shell command, outside permission rules); verifier reads test diffs | Partial: allowed scripts and tests can still write `gate-commands`, so review its diff |
 | Stay in scope | Out-of-scope edits prompt for permission; verifier lists out-of-scope files | Medium: lost under auto-accept or skip-permissions |
 | Push, merge, reset, install, rm | `ask` rules | Strong |
-| No publish, curl or wget; no reading `.env` | `deny` rules | Strong |
+| No publish, curl or wget; no reading `.env`, `~/.ssh`, `~/.aws` or `~/.config/gh` | `deny` rules | Medium: covers Claude's own commands only (see below) |
 | Verifier doesn't edit | No Edit or Write tools | Medium: Bash could still write |
 | No two nodes on one file | Worktrees, by instruction | Weak: not hard-enforced |
 
 Rows marked Weak, Partial or Medium rely partly or wholly on the prompt, and an agent can ignore a prompt. If a rule matters to you, back it with a permission rule or a hook, or check it yourself in review.
+
+**The allow rules decide what runs without asking. They are not a sandbox.** Claude can edit `src/`, `tests/` and `graph/` and run the tests and `graph/scripts/` without a prompt, so it can write code and run it. That code is not bound by the `deny` rules: a test or script could still open a network connection or read a file the rules deny. The rules make the normal path quiet and the risky commands visible. They don't contain code Claude writes. If you need that, run the session in a container or a VM with no secrets, or turn on Claude Code's sandboxed Bash.
 
 ## FAQ
 

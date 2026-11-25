@@ -31,7 +31,7 @@ failed=""
 report=""
 while IFS= read -r cmd || [ -n "$cmd" ]; do
   case "$cmd" in ''|'#'*) continue ;; esac
-  out="$(bash -c "$cmd" 2>&1)"
+  out="$(bash -c "$cmd" </dev/null 2>&1)"   # a check must not read the rest of gate-commands
   code=$?
   if [ $code -ne 0 ]; then
     failed="$failed\n- $cmd (exit $code)"
@@ -45,7 +45,9 @@ if [ -z "$failed" ]; then
   exit 0
 fi
 
-n=$(( $(cat "$COUNTER" 2>/dev/null || echo 0) + 1 ))
+n="$(cat "$COUNTER" 2>/dev/null || true)"
+case "$n" in ''|*[!0-9]*) n=0 ;; esac   # digits only: never evaluate the file as code
+n=$(( 10#$n + 1 ))
 echo "$n" > "$COUNTER"
 printf -- "- %s gate FAIL (attempt %s/%s):%b\n" "$(ts)" "$n" "$MAX_ATTEMPTS" "$failed" >> "$LOG"
 

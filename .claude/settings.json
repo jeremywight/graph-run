@@ -1,17 +1,14 @@
 {
   "permissions": {
     "allow": [
-      "Read",
-      "Grep",
-      "Glob",
       "Edit(graph/**)",
       "Edit(src/**)",
       "Edit(tests/**)",
       "Bash(npm test:*)",
       "Bash(npm run:*)",
-      "Bash(npx tsc:*)",
-      "Bash(npx eslint:*)",
-      "Bash(npx vitest:*)",
+      "Bash(npx --no-install tsc:*)",
+      "Bash(npx --no-install eslint:*)",
+      "Bash(npx --no-install vitest:*)",
       "Bash(node graph/scripts/:*)",
       "Bash(python3 graph/scripts/:*)",
       "Bash(git status:*)",
@@ -41,8 +38,12 @@
       "Read(./.env)",
       "Read(./.env.*)",
       "Read(./secrets/**)",
+      "Read(~/.ssh/**)",
+      "Read(~/.aws/**)",
+      "Read(~/.config/gh/**)",
       "Edit(.claude/settings.json)",
-      "Edit(.claude/hooks/**)"
+      "Edit(.claude/hooks/**)",
+      "Edit(graph/.gate_attempts)"
     ]
   },
   "hooks": {

@@ -40,7 +40,7 @@ Fill all six fields from the request, CLAUDE.md and the repo. If a missing detai
 - Allowed changes (scope): (paths/globs)
 - Run limit: (max nodes, max retries per node = 3, wall-clock or token budget)
 
-Write the acceptance checks that can run as commands into .claude/gate-commands (one per line). The Stop hook runs them while a graph run is active.
+Write the acceptance checks that can run as commands into .claude/gate-commands (one per line). The Stop hook runs them while a graph run is active. The owner approves each edit to that file, because the hook runs its lines without a permission check. Write `npx` checks as `npx --no-install <tool>`, so a missing tool fails instead of being downloaded.
 </inputs>
 
 <specialists>

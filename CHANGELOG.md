@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.1 (2026-11-25)
+
+- **Specialists from your own agents:** when `/graph-run` writes a specialist you approved, it first looks in your user-level agents (`~/.claude/agents/`). If one fits, it copies it into the project's `.claude/agents/` (never links it), keeps its standards and constraints, and adds the project's details. Otherwise it uses the kit's templates, as before. A new "started from" column in graph.md's Specialists table records the template, or the user-level path, the date and a short SHA-256.
+- **Drift check at write-back:** at the end of each phase, the lead compares each copied specialist with its source. If either has changed, the owner sees the differences and chooses: bring the source's updates in, carry the project's lessons back, or keep them apart. Nothing syncs during a phase or without the owner's say.
+- **Settings:** `settings.json` now allows `Read(~/.claude/agents/**)` and `Bash(shasum -a 256:*)`, so finding and checking user-level agents doesn't prompt every time. Writing to a user-level agent (carrying a project's lessons back) still asks.
+- Planning is unchanged: specialists are still proposed from the project's own agents and the gaps, and nothing is written before you approve. Existing installs: run `install.sh --update` to get the new command. `--update` doesn't touch `settings.json`, so add the two allow rules by hand. Graphs already in progress can add the new column by hand.
+
 ## 1.2.0 (2026-11-25)
 
 Security and reliability fixes from a review of the whole repo.

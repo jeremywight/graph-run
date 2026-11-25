@@ -160,6 +160,10 @@ The reviewers are what catch problems tests can't. In the case study, the puzzle
 
 You don't have to write them up front: `/graph-run` proposes them. To start from something real, copy one of the [example specialists](templates/agents/examples/) from the case study (puzzle master, period expert, UI designer, game designer), or the blank [domain reviewer](templates/agents/domain-reviewer.md) and [security reviewer](templates/agents/security-reviewer.md) templates.
 
+If you keep your own agents in `~/.claude/agents/`, `/graph-run` checks there when it writes a specialist you've approved. A matching agent is **copied** into the project and the project's details are added, never linked. The run then works from its own copy: its standards can't change partway through a run, changes show up in review, and the repo still works on a machine without your agents. The Specialists table records the source file, the date and a hash.
+
+So the copies don't quietly drift, the write-back step at the end of each phase compares each copy with its source. If either one has changed, you see the differences and choose: bring your updates into the project, carry the project's lessons back to your shared agent, or keep them apart. Nothing syncs during a phase, and nothing syncs without your say.
+
 ### Outside agents
 
 Some work is better done outside Claude Code: in the case study, the owner preferred another vendor's agent for image generation over anything Claude could draw. `/graph-run` pairs such an outside agent with a Claude **coordinator** that briefs it, reviews its batches with the specialists and brings accepted work into the repo. The two never talk directly; they pass files and `READY-n` / `DONE-n` markers through a shared folder. Start from the [coordinator](templates/agents/coordinator.md) and [outside agent](templates/outside-agent.md) templates.
